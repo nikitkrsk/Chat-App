@@ -1,0 +1,17 @@
+[
+  {
+    "uuid": "04d84a92-1663-4e22-8d87-8f2431ef9130",
+    "password": "secret123",
+    "firstName": "Obi Wan",
+    "lastName": "Kenobi",
+    "email": "atroshenkonikita@gmail.com",
+    "phone": "+359899993311",
+    "role": "admin",
+    "isVerified": false,
+    "loginStatus": false,
+    "contactInfo": {
+      "whatsApp": "+359899993311",
+      "skype": "testSkype"
+    }
+  }
+]
