@@ -39,6 +39,6 @@ const prod: ConnectionOptions = {
   },
 };
 
-const config = process.env.ENVIRONMENT === "development" ? dev : dev;
+const config = process.env.ENVIRONMENT === "development" ? dev : prod;
 
 export default config;
