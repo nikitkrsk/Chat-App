@@ -120,17 +120,17 @@ const getData2 = async function () {
 
 ## if you want to install particulare version of some npm module add @version (@2.2.1)
 
--everything @types/. - types annotation for typescript
--cors - CORS middleware
--dotenv -- Allow .env files
--express - web framework
--joi - validation
--jsonwebtoken - JWT token for authorization/authentication
--jwt-decode - for checking the token
--password-hash - hashing the passwords of users cause it's not allowed to store those in normal format
--pg - postgres
--ts-node - typescript for node
--typeorm - ORM for typescript Sequelize is one of the famous - in big comapnies are not used in most of the cases - they write pure SQL queries - for startups or small projects are ok in most of the cases . https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5/ Good article
+- everything @types/. - types annotation for typescript
+- cors - CORS middleware
+- dotenv -- Allow .env files
+- express - web framework
+- joi - validation
+- jsonwebtoken - JWT token for authorization/authentication
+- jwt-decode - for checking the token
+- password-hash - hashing the passwords of users cause it's not allowed to store those in normal format
+- pg - postgres
+- ts-node - typescript for node
+- typeorm - ORM for typescript Sequelize is one of the famous - in big comapnies are not used in most of the cases - they write pure SQL queries - for startups or small projects are ok in most of the cases . https://blog.logrocket.com/why-you-should-avoid-orms-with-examples-in-node-js-e0baab73fa5/ Good article
 
 10. add .env
 11. add src folder
