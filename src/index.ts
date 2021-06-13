@@ -1,8 +1,7 @@
 import { createConnection, getConnectionOptions } from "typeorm";
 import express from "express";
 import { Server } from "socket.io";
-import * as socketio from "socket.io";
-import * as path from "path";
+import { authorize } from "@thream/socketio-jwt";
 
 import cors from "cors";
 import router from "./routes";
@@ -32,19 +31,30 @@ createConnection(dbConfig).then(async (connection) => {
   app.use("/", router);
 
   // Call socket and show time every second
-  let interval;
-  io.on("connection", (socket) => {
-    console.log("New client connected");
-    if (interval) {
-      clearInterval(interval);
-    }
-    interval = setInterval(() => getApiAndEmit(socket), 1000);
-    socket.on("disconnect", () => {
-      console.log("Client disconnected");
-      clearInterval(interval);
-    });
-  });
+  io.use(
+    authorize({
+      secret: process.env.JWT_KEY,
+    })
+  );
 
+  let interval;
+  io.on("connection", async (socket) => {
+    // jwt payload of the connected client
+    // console.log(socket.decodedToken);
+    const clients = await io.sockets.allSockets();
+    if (clients != null) {
+      for (const clientId of clients) {
+        const client = io.sockets.sockets.get(clientId);
+        if (interval) {
+          clearInterval(interval);
+        }
+        interval = setInterval(() => getApiAndEmit(client), 1000);
+        client?.emit("messages", { message: "Success!" });
+        // we can access the jwt payload of each connected client
+        console.log(client?.decodedToken);
+      }
+    }
+  });
   const getApiAndEmit = (socket) => {
     const response = new Date();
     // Emitting a new message. Will be consumed by the client

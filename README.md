@@ -1,3 +1,10 @@
+# To start project
+```bash
+git clone project
+redis-server &
+
+``` 
+
 # GIT MOST USED COMMANDS
 
 ```bash
@@ -109,6 +116,7 @@ const getData2 = async function () {
 # Project
 
 1.  INSTALL TSC - TYPESCRIPT GLOBALLY
+1.  install redis globally - sudo apt-get install redis-server 
 2.  npm init
 3.  npm install -D typescript
 4.  npm install -D tslint

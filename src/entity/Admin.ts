@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
 } from "typeorm";
-import { Role, Status, AdminContactInfo, ChatUser, Group, Message } from ".";
+import { Role, Status, AdminContactInfo, ChatUser, Group, Message, Refresh } from ".";
 
 @Entity()
 @Unique(["email"])
@@ -63,6 +63,9 @@ export class Admin {
     nullable: true,
   })
   messages?: Message[];
+
+  @OneToMany(() => Refresh, (refresh) => refresh.admin, { nullable: true })
+  refreshes?: Refresh[];
 
   @CreateDateColumn()
   createdAt: Date;
