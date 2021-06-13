@@ -9,14 +9,20 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
 } from "typeorm";
-import { Role, Status, AdminContactInfo, ChatUser, Group, Message } from ".";
+import { Role, Status, Admin, Group, Message} from ".";
 
 @Entity()
 @Unique(["email"])
 @Unique(["uuid"])
-export class Admin {
+export class ChatUser {
   @PrimaryGeneratedColumn("uuid")
   uuid?: string;
+
+  @Column()
+  username: string;
+
+  @Column()
+  email: string;
 
   @Column()
   firstName: string;
@@ -24,20 +30,23 @@ export class Admin {
   @Column()
   lastName: string;
 
-  @Column()
-  email: string;
+  @Column({ default: false })
+  loginStatus: boolean;
+
+  @Column({ default: false })
+  verified: boolean;
 
   @Column({ nullable: true })
-  image: string;
+  verifiedAt: Date;
 
   @Column()
   password: string;
 
   @Column({ nullable: true })
-  phone: string;
+  image: string;
 
-  @Column({ default: false })
-  loginStatus: boolean;
+  @Column({ nullable: true })
+  phone: string;
 
   @ManyToOne(() => Status, (status) => status.admins)
   status: Status;
@@ -45,21 +54,16 @@ export class Admin {
   @ManyToOne(() => Role, (role) => role.admins)
   role: Role;
 
-  @OneToMany(() => AdminContactInfo, (info) => info.admin, { nullable: true })
-  info?: Admin[];
+  @OneToMany(() => ChatUser, (friend) => friend.friends, { nullable: true })
+  friends?: ChatUser[];
 
-  @OneToMany(() => Admin, (friend) => friend.friends, { nullable: true })
-  friends?: Admin[];
+  @OneToMany(() => Admin, (friend) => friend.userFriends, { nullable: true })
+  adminFriends?: Admin[];
 
-  @OneToMany(() => ChatUser, (friend) => friend.adminFriends, {
-    nullable: true,
-  })
-  userFriends?: Admin[];
-
-  @ManyToMany(() => Group, (group) => group.admins, { nullable: true })
+  @ManyToMany(() => Group, (group) => group.users, { nullable: true })
   groups?: Group[];
 
-  @OneToMany(() => Message, (msg) => msg.admins, {
+  @OneToMany(() => Message, (msg) => msg.users, {
     nullable: true,
   })
   messages?: Message[];

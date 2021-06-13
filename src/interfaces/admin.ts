@@ -4,10 +4,9 @@ export interface AdminCreate {
   phoneNumber?: string;
   firstName: string;
   lastName: string;
-  role: string
-  contactInfo?: object 
+  role: string;
+  contactInfo?: object;
 }
-
 
 export interface AdminUpdate {
   email?: string;
@@ -16,7 +15,6 @@ export interface AdminUpdate {
   phoneNumber?: string;
   firstName?: string;
   lastName?: string;
-  role?: string
-  contactInfo?: object 
+  role?: string;
+  contactInfo?: object;
 }
-

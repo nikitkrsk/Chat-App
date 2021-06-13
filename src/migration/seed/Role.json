@@ -1,10 +1,10 @@
 [
   {
-    "id": 1,
+    "uuid": "f34b5665-49a9-4a9c-995a-fa4f83c1dca6",
     "name": "admin"
   },
   {
-    "id": 2,
+    "uuid": "35b66894-b557-456b-b680-2d5f31a0872c",
     "name": "user"
   }
 ]

@@ -56,8 +56,9 @@ export class Admins1618747590625 implements MigrationInterface {
               ...admin,
               createdAt: new Date(),
               updatedAt: new Date(),
-              status: status,
-              role: role,
+              status,
+              role,
+              image: null,
               password: passwordHash.generate(admin.password),
             };
             return Promise.resolve(adminRepository.save(u));
@@ -73,7 +74,7 @@ export class Admins1618747590625 implements MigrationInterface {
                 let r = new AdminContactInfo();
                 r = {
                   name: key,
-                  value: value,
+                  value,
                   admin: adm.find((el: Admin) => el.email === info.email),
                   createdAt: new Date(),
                   updatedAt: new Date(),

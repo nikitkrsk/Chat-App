@@ -3,9 +3,9 @@ import { Request, Response } from "express";
 import AdminService from "../services/admin";
 class AdminsController {
   /*
-    
+
     Get All
-  
+
   */
   static getAll = async (req: Request, res: Response) => {
     const { error, result } = await AdminService.getAllAdmins();
@@ -14,13 +14,15 @@ class AdminsController {
         error: error.msg,
       });
     }
-    return res.status(200).json(result.map(({ password, ...keepAttrs }) => keepAttrs));
+    return res
+      .status(200)
+      .json(result.map(({ password, ...keepAttrs }) => keepAttrs));
   };
 
   /*
-    
+
     Create Admin
-  
+
   */
   static createAdmin = async (req: Request, res: Response) => {
     const { error, result } = await AdminService.createAdmin(req.body);

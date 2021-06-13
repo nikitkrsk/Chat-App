@@ -1,14 +1,14 @@
 [
   {
-    "id": 0,
+    "uuid": "5610e6f2-83cf-484e-bbc2-13b7b4d47312",
     "name": "inactive"
   },
   {
-    "id": 1,
+    "uuid": "bf1e0312-d74e-412a-b138-d3c632d071d8",
     "name": "active"
   },
   {
-    "id": 2,
+    "uuid": "06cb20cb-eb20-4990-a86d-a97de413e92f",
     "name": "excluded"
   }
 ]

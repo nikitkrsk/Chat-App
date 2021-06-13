@@ -10,8 +10,8 @@ import { Admin } from ".";
 
 @Entity()
 export class AdminContactInfo {
-  @PrimaryGeneratedColumn()
-  id?: string;
+  @PrimaryGeneratedColumn("uuid")
+  uuid?: string;
 
   @Column()
   name: string;

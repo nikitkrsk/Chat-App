@@ -1,24 +1,18 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  Generated,
-  OneToMany,
-} from "typeorm";
-import { Admin } from ".";
+import { Entity, PrimaryGeneratedColumn, Column, Generated, OneToMany } from "typeorm";
+import { Admin, ChatUser } from ".";
 
 @Entity()
 export class Status {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  @Generated("uuid")
+  @PrimaryGeneratedColumn("uuid")
   uuid?: string;
+
 
   @Column()
   name: string;
 
   @OneToMany(() => Admin, (admin) => admin.status, { nullable: true })
   admins?: Admin[];
+
+  @OneToMany(() => ChatUser, (user) => user.status, { nullable: true })
+  users?: ChatUser[];
 }
