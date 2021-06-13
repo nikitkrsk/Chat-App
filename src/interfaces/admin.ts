@@ -1,5 +1,6 @@
 export interface AdminCreate {
   email: string;
+  username: string;
   password: string;
   phoneNumber?: string;
   firstName: string;
@@ -10,6 +11,7 @@ export interface AdminCreate {
 
 export interface AdminUpdate {
   email?: string;
+  username?: string;
   password?: string;
   status?: string;
   phoneNumber?: string;

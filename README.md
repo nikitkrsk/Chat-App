@@ -2,8 +2,14 @@
 ```bash
 git clone project
 redis-server &
-
+npm i 
+npm run start
 ``` 
+## To clear Dbs
+```bash
+sudo -u postgres psql somedatabase
+DROP TABLE admin, admin_contact_info, chat_user, group, message, migrations, refresh, role, status CASCADE;
+```
 
 # GIT MOST USED COMMANDS
 

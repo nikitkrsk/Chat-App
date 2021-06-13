@@ -13,6 +13,7 @@ import { Role, Status, AdminContactInfo, ChatUser, Group, Message, Refresh } fro
 
 @Entity()
 @Unique(["email"])
+@Unique(["username"])
 @Unique(["uuid"])
 export class Admin {
   @PrimaryGeneratedColumn("uuid")
@@ -23,6 +24,9 @@ export class Admin {
 
   @Column()
   lastName: string;
+
+  @Column()
+  username: string;
 
   @Column()
   email: string;

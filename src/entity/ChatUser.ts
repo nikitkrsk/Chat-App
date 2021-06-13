@@ -13,6 +13,7 @@ import { Role, Status, Admin, Group, Message, Refresh} from ".";
 
 @Entity()
 @Unique(["email"])
+@Unique(["username"])
 @Unique(["uuid"])
 export class ChatUser {
   @PrimaryGeneratedColumn("uuid")

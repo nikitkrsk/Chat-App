@@ -9,6 +9,8 @@ import dbConfig from "./ormconfig";
 
 import * as http from "http";
 
+import { getRepository, Repository } from "typeorm";
+import { ChatUser, Admin } from "./entity";
 // Connects to the Database -> then starts the express
 createConnection(dbConfig).then(async (connection) => {
   const port = process.env.PORT;
@@ -37,29 +39,49 @@ createConnection(dbConfig).then(async (connection) => {
     })
   );
 
-  let interval;
   io.on("connection", async (socket) => {
     // jwt payload of the connected client
-    // console.log(socket.decodedToken);
-    const clients = await io.sockets.allSockets();
-    if (clients != null) {
-      for (const clientId of clients) {
-        const client = io.sockets.sockets.get(clientId);
-        if (interval) {
-          clearInterval(interval);
-        }
-        interval = setInterval(() => getApiAndEmit(client), 1000);
-        client?.emit("messages", { message: "Success!" });
-        // we can access the jwt payload of each connected client
-        console.log(client?.decodedToken);
-      }
+    console.log(socket.decodedToken);
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
+    const adminRepository: Repository<Admin> = getRepository(Admin);
+    const user: ChatUser = await userRepository.findOne({
+      where: { uuid: socket.decodedToken.uuid },
+    });
+    const admin: Admin = await adminRepository.findOne({
+      where: { uuid: socket.decodedToken.uuid },
+    });
+    if (user === undefined && admin === undefined) {
+      console.log("user not found");
     }
+    const exUser = user ?? admin;
+
+    console.log(exUser);
+    socket.emit("login", `Hi ${exUser.username}`);
+    socket.broadcast.emit("login", exUser.username);
+    socket.join(exUser.username);
+    // Message
+    // socket.on('message', (data) => {
+    //     if (exUser.email) {
+    //       data.from_id = exUser.email;
+    //       socket.emit('messageSuccess', {});
+    //       let msg = {
+    //         text: data.text,
+    //         from_id: data.from_id
+    //       };
+    //       if (data.to_id) {
+    //         msg.to_id = data.to_id;
+    //       }
+    //       // Message.create(msg);
+    //       if (data.to_id) {
+    //         io.to(data.to_id).emit('message', data);
+    //         io.to(data.from_id).emit('message', data);
+    //       } else {
+    //         io.emit('message', data);
+    //       }
+    //     }
+    // });
   });
-  const getApiAndEmit = (socket) => {
-    const response = new Date();
-    // Emitting a new message. Will be consumed by the client
-    socket.emit("FromAPI", response);
-  };
+
   // read connection options from ormconfig file (or ENV variables)
   // const connectionOptions = await getConnectionOptions();
 

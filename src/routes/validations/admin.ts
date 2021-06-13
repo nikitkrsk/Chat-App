@@ -12,6 +12,7 @@ export const createNewAdminSchema = (
       password: Joi.string().min(1).max(150).required(),
       phone: Joi.string().min(2).max(250).allow(null),
       firstName: Joi.string().min(2).max(50).required(),
+      username: Joi.string().min(2).max(50).required(),
       lastName: Joi.string().min(2).max(50).required(),
       role: Joi.string().min(2).max(50).required(),
       contactInfo: Joi.object()
