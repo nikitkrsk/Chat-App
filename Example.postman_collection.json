@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "1cc3e0f8-d992-4447-bbb7-676ab0cc6f8e",
+		"name": "Example",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get All Admins",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{website}}/api/admins/get_admins",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"admins",
+								"get_admins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Test\",\n    \"username\": \"{{$randomUserName}}\",\n    \"lastName\": \"Admin\",\n    \"email\": \"sosme@somess.com\",\n    \"password\": \"secret123\",\n    \"phone\": \"+359 89 934 38 12\"\n}"
+						},
+						"url": {
+							"raw": "http://{{website}}/api/admins/create_admin",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"admins",
+								"create_admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateAdmin",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Test\",\n    \"role\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{website}}/api/admins/admin/:uuid",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"admins",
+								"admin",
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "394efeda-0f8a-46a2-bc0e-c6f643dad9a2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "signin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"auth_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"atroshenkonikita@gmail.com\",\n    \"password\": \"secret123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{website}}/api/auth/signin",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
