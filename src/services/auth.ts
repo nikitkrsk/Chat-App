@@ -1,5 +1,8 @@
 import { getRepository, Repository } from "typeorm";
-import { ChatUser, Admin, Refresh, Role, Status } from "../entity";
+import redis from "redis"
+import JWTR from "jwt-redis"
+
+import { ChatUser, Admin, Role, Status } from "../entity";
 import {
   IRefreshInput,
   IRefreshSuccess,
@@ -13,7 +16,6 @@ import passwordHash from "password-hash";
 
 import * as jwt from "jsonwebtoken";
 import jwt_decode from "jwt-decode";
-import { sessionQueue } from "../queues/session";
 
 export default class UserService {
   /**
@@ -23,15 +25,17 @@ export default class UserService {
    * @return {[Promise<IResponse<ISigninSuccess>>]}      [returns the user, token and refresh token]
    */
   public static signin = async (
-    input: ISigninInput
+    input: ISigninInput,
   ): Promise<IResponse<ISigninSuccess>> => {
     // Email to lower case
     input.email = input.email.toLowerCase().trim();
     const userRepository: Repository<ChatUser> = getRepository(ChatUser);
     const adminRepository: Repository<Admin> = getRepository(Admin);
     const statusRepository: Repository<Status> = getRepository(Status);
-    const refreshRepository: Repository<Refresh> = getRepository(Refresh);
-
+    // JWT REDIS FOR TOKEN
+    const redisClient = redis.createClient();
+    const jwtr = new JWTR(redisClient);
+    // GET USER AND ADMIN
     const user: ChatUser = await userRepository.findOne({
       where: { email: input.email },
       relations: ["status", "role"],
@@ -70,36 +74,11 @@ export default class UserService {
     const JWTData = {
       uuid: exUser.uuid,
       role: exUser.role.name,
+      jti: exUser.uuid
     };
-    const token = jwt.sign(JWTData, process.env.JWT_KEY!, { expiresIn: "30s" });
-    // Refresh token creation
-    const refreshToken = jwt.sign(JWTData, process.env.JWT_KEY!, {
-      expiresIn: "1m",
-    });
-    const refresh = new Refresh();
-    refresh.refreshToken = refreshToken;
-    refresh.email = exUser.email;
-    refresh.user = user ?? null;
-    refresh.admin = admin ?? null;
-    try {
-      await refreshRepository.save(refresh);
-    } catch (e) {
-      return {
-        error: {
-          code: 500,
-          msg: `Something Went Wrong`,
-        },
-      };
-    }
-    sessionQueue.add(
-      { refreshToken },
-      // the same time as refresh token in millis
-      {
-        delay: 1000 * 60, // 1m to do 1h add "* 60"
-      }
-    );
+    const token = await jwtr.sign(JWTData, process.env.JWT_KEY!,  { expiresIn: "30s" })
 
     delete exUser.password;
-    return { result: { user: exUser, token, refreshToken } };
+    return { result: { user: exUser, token } };
   };
 }

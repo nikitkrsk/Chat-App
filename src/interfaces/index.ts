@@ -17,18 +17,15 @@ export interface ISigninInput {
 export interface IRefreshInput {
   email: string;
   uuid: string;
-  refreshToken: string;
 }
 
 export interface ISigninSuccess {
   user: ChatUser | Admin;
   token: string;
-  refreshToken: string;
 }
 
 export interface ISignoutInput {
   email: string;
-  refreshToken: string;
 }
 
 export interface IRefreshSuccess {

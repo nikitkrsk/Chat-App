@@ -42,7 +42,8 @@ class AdminsController {
   static updateAdmin = async (req: Request, res: Response) => {
     const { error, result } = await AdminService.updateAdmin(
       req.body,
-      req.params.uuid
+      req.params.uuid,
+      req.app.get("socketService")
     );
     if (error) {
       return res.status(error.code).json({

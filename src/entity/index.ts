@@ -5,4 +5,3 @@ export * from "./AdminContactInfo";
 export * from "./ChatUser"
 export * from "./Group"
 export * from "./Message"
-export * from "./Refresh"

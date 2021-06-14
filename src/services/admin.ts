@@ -1,12 +1,10 @@
-import {
-  getRepository,
-  Repository,
-} from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { Admin, AdminContactInfo, Role, Status } from "../entity";
 import { IResponse } from "../interfaces";
 import passwordHash from "password-hash";
 import { AdminCreate, AdminUpdate } from "../interfaces/admin";
-
+import { SocketService } from "../socket";
+import { EMITS} from "../interfaces/socketEmits"
 export default class AdminService {
   public static getAllAdmins = async (): Promise<IResponse<Admin[]>> => {
     const adminRepository: Repository<Admin> = getRepository(Admin);
@@ -42,9 +40,8 @@ export default class AdminService {
     const adminRepository: Repository<Admin> = getRepository(Admin);
     const statusRepository: Repository<Status> = getRepository(Status);
     const roleRepository: Repository<Role> = getRepository(Role);
-    const adminContactInfoRepository: Repository<AdminContactInfo> = getRepository(
-      AdminContactInfo
-    );
+    const adminContactInfoRepository: Repository<AdminContactInfo> =
+      getRepository(AdminContactInfo);
 
     const checkAdminExist: Admin = await adminRepository.findOne({
       where: { email: input.email },
@@ -111,14 +108,14 @@ export default class AdminService {
 
   public static updateAdmin = async (
     input: AdminUpdate,
-    uuid: string
+    uuid: string,
+    socketService: SocketService
   ): Promise<IResponse<Admin>> => {
     const adminRepository: Repository<Admin> = getRepository(Admin);
     const statusRepository: Repository<Status> = getRepository(Status);
     const roleRepository: Repository<Role> = getRepository(Role);
-    const adminContactInfoRepository: Repository<AdminContactInfo> = getRepository(
-      AdminContactInfo
-    );
+    const adminContactInfoRepository: Repository<AdminContactInfo> =
+      getRepository(AdminContactInfo);
 
     let admin: Admin = await adminRepository.findOne({
       where: { uuid },
@@ -140,7 +137,9 @@ export default class AdminService {
         where: { name: input.role },
       })) ?? admin.role;
 
-    const password: string = input.password ?? admin.password
+    socketService.emiter(EMITS.UPDATE_ACCOUNT, "UpdateAccount");
+
+    const password: string = input.password ?? admin.password;
     admin = {
       ...admin,
       ...input,

@@ -8,7 +8,7 @@ npm run start
 ## To clear Dbs
 ```bash
 sudo -u postgres psql somedatabase
-DROP TABLE admin, admin_contact_info, chat_user, group, message, migrations, refresh, role, status CASCADE;
+DROP TABLE admin, admin_contact_info, chat_user, "group", message, migrations, role, status CASCADE;
 ```
 
 # GIT MOST USED COMMANDS
@@ -184,3 +184,6 @@ ALTER ROLE newuser SUPERUSER;
 ALTER USER user_name WITH PASSWORD 'new_password';
 ALTER USER newuser WITH PASSWORD 'secret123';
 ```
+
+# Useful links
+[Sokcets emit cheatsheet](https://socket.io/docs/v4/emit-cheatsheet/)
