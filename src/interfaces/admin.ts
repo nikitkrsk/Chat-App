@@ -1,15 +1,13 @@
-export interface AdminCreate {
+export interface UserCreate {
   email: string;
   username: string;
   password: string;
   phoneNumber?: string;
   firstName: string;
   lastName: string;
-  role: string;
-  contactInfo?: object;
 }
 
-export interface AdminUpdate {
+export interface UserUpdate {
   email?: string;
   username?: string;
   password?: string;
@@ -18,5 +16,4 @@ export interface AdminUpdate {
   firstName?: string;
   lastName?: string;
   role?: string;
-  contactInfo?: object;
 }

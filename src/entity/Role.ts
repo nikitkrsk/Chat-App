@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Admin, ChatUser } from ".";
+import { ChatUser } from ".";
 
 @Entity()
 export class Role {
@@ -15,9 +15,6 @@ export class Role {
 
   @Column()
   name: string;
-
-  @OneToMany(() => Admin, (admin) => admin.role, { nullable: true })
-  admins?: Admin[];
 
   @OneToMany(() => ChatUser, (user) => user.role, { nullable: true })
   users?: ChatUser[];

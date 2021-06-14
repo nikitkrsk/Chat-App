@@ -1,15 +1,23 @@
 import { getRepository, Repository } from "typeorm";
-import { Admin, AdminContactInfo, Role, Status } from "../entity";
+import { Role, Status, ChatUser } from "../entity";
 import { IResponse } from "../interfaces";
 import passwordHash from "password-hash";
-import { AdminCreate, AdminUpdate } from "../interfaces/admin";
+import { UserCreate, UserUpdate } from "../interfaces/admin";
 import { SocketService } from "../socket";
-import { EMITS} from "../interfaces/socketEmits"
+import { EMITS } from "../interfaces/socketEmits";
+import { ROLES } from "../interfaces/roles";
 export default class AdminService {
-  public static getAllAdmins = async (): Promise<IResponse<Admin[]>> => {
-    const adminRepository: Repository<Admin> = getRepository(Admin);
+  public static getAllUsers = async (
+    usersType: ROLES
+  ): Promise<IResponse<ChatUser[]>> => {
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
+    const roleRepository: Repository<Role> = getRepository(Role);
 
-    const admins = await adminRepository.find({
+    const role: Role = await roleRepository.findOne({
+      where: { name: usersType },
+    });
+    const admins = await userRepository.find({
+      where: { role },
       order: {
         createdAt: "DESC",
       },
@@ -18,7 +26,6 @@ export default class AdminService {
         leftJoinAndSelect: {
           role: "admin.role",
           status: "admin.status",
-          info: "admin.info",
         },
       },
     });
@@ -34,16 +41,15 @@ export default class AdminService {
     };
   };
 
-  public static createAdmin = async (
-    input: AdminCreate
-  ): Promise<IResponse<Admin>> => {
-    const adminRepository: Repository<Admin> = getRepository(Admin);
+  public static createUser = async (
+    input: UserCreate,
+    roleInput: ROLES
+  ): Promise<IResponse<ChatUser>> => {
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
     const statusRepository: Repository<Status> = getRepository(Status);
     const roleRepository: Repository<Role> = getRepository(Role);
-    const adminContactInfoRepository: Repository<AdminContactInfo> =
-      getRepository(AdminContactInfo);
 
-    const checkAdminExist: Admin = await adminRepository.findOne({
+    const checkAdminExist: ChatUser = await userRepository.findOne({
       where: { email: input.email },
     });
 
@@ -58,70 +64,54 @@ export default class AdminService {
     });
 
     const role: Role = await roleRepository.findOne({
-      where: { name: input.role },
+      where: { name: roleInput },
     });
     if (role === undefined) {
       return {
         error: { code: 409, msg: "Incorrect Role" },
       };
     }
+    const adminVerified = roleInput === ROLES.ADMIN ? {
+      verifiedAt : new Date(),
+      verified: true
+    }: null
 
-    let admin: Admin = new Admin();
-    admin = {
-      ...admin,
+    let user: ChatUser = new ChatUser();
+    user = {
+      ...user,
       ...input,
+      ...adminVerified,
       status,
       role,
       password: passwordHash.generate(input.password),
     };
 
     try {
-      await adminRepository.save(admin);
+      await userRepository.save(user);
     } catch (e) {
       return {
         error: { code: 500, msg: "Something went wrong" },
       };
     }
-    if (input.contactInfo !== undefined) {
-      Object.entries(input.contactInfo).forEach(async ([key, value]) => {
-        let contactInfo = new AdminContactInfo();
-        contactInfo = {
-          name: key,
-          value,
-          admin,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        try {
-          await adminContactInfoRepository.save(contactInfo);
-        } catch (e) {
-          return {
-            error: { code: 500, msg: "Something went wrong" },
-          };
-        }
-      });
-    }
 
-    delete admin.password;
-    return { result: admin };
+    delete user.password;
+    return { result: user };
   };
 
-  public static updateAdmin = async (
-    input: AdminUpdate,
+  public static updateUser = async (
+    input: UserUpdate,
     uuid: string,
     socketService: SocketService
-  ): Promise<IResponse<Admin>> => {
-    const adminRepository: Repository<Admin> = getRepository(Admin);
+  ): Promise<IResponse<ChatUser>> => {
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
     const statusRepository: Repository<Status> = getRepository(Status);
     const roleRepository: Repository<Role> = getRepository(Role);
-    const adminContactInfoRepository: Repository<AdminContactInfo> =
-      getRepository(AdminContactInfo);
 
-    let admin: Admin = await adminRepository.findOne({
+    let user: ChatUser = await userRepository.findOne({
       where: { uuid },
     });
 
-    if (admin === undefined) {
+    if (user === undefined) {
       return {
         error: { code: 404, msg: "User with such id doesn't exists" },
       };
@@ -130,33 +120,33 @@ export default class AdminService {
     const status =
       (await statusRepository.findOne({
         where: { name: input.status },
-      })) ?? admin.status;
+      })) ?? user.status;
 
     const role: Role =
       (await roleRepository.findOne({
         where: { name: input.role },
-      })) ?? admin.role;
+      })) ?? user.role;
 
     socketService.emiter(EMITS.UPDATE_ACCOUNT, "UpdateAccount");
 
-    const password: string = input.password ?? admin.password;
-    admin = {
-      ...admin,
+    const password: string = input.password ?? user.password;
+    user = {
+      ...user,
       ...input,
       status,
       role,
-      password: admin.password,
+      password: user.password,
     };
 
     try {
-      await adminRepository.save(admin);
+      await userRepository.save(user);
     } catch (e) {
       return {
         error: { code: 500, msg: "Something went wrong" },
       };
     }
 
-    delete admin.password;
-    return { result: admin };
+    delete user.password;
+    return { result: user };
   };
 }

@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
 } from "typeorm";
-import { Admin, ChatUser } from ".";
+import { ChatUser } from ".";
 import { Group } from "./Group";
 
 @Entity()
@@ -27,9 +27,6 @@ export class Message {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @ManyToMany(() => Admin, (admin) => admin.messages, { nullable: true })
-  admins?: Admin[];
 
   @ManyToMany(() => ChatUser, (user) => user.messages, { nullable: true })
   users?: ChatUser[];

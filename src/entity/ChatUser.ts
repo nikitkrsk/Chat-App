@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
 } from "typeorm";
-import { Role, Status, Admin, Group, Message } from ".";
+import { Role, Status, Group, Message } from ".";
 
 @Entity()
 @Unique(["email"])
@@ -49,17 +49,14 @@ export class ChatUser {
   @Column({ nullable: true })
   phone: string;
 
-  @ManyToOne(() => Status, (status) => status.admins)
+  @ManyToOne(() => Status, (status) => status.users)
   status: Status;
 
-  @ManyToOne(() => Role, (role) => role.admins)
+  @ManyToOne(() => Role, (role) => role.users)
   role: Role;
 
   @OneToMany(() => ChatUser, (friend) => friend.friends, { nullable: true })
   friends?: ChatUser[];
-
-  @OneToMany(() => Admin, (friend) => friend.userFriends, { nullable: true })
-  adminFriends?: Admin[];
 
   @ManyToMany(() => Group, (group) => group.users, { nullable: true })
   groups?: Group[];

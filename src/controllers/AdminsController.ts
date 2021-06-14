@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 
-import AdminService from "../services/admin";
+import AdminService from "../services/users";
+
+import { ROLES } from "../interfaces/roles";
+
 class AdminsController {
   /*
 
@@ -8,7 +11,7 @@ class AdminsController {
 
   */
   static getAll = async (req: Request, res: Response) => {
-    const { error, result } = await AdminService.getAllAdmins();
+    const { error, result } = await AdminService.getAllUsers(ROLES.ADMIN);
     if (error) {
       return res.status(error.code).json({
         error: error.msg,
@@ -25,7 +28,7 @@ class AdminsController {
 
   */
   static createAdmin = async (req: Request, res: Response) => {
-    const { error, result } = await AdminService.createAdmin(req.body);
+    const { error, result } = await AdminService.createUser(req.body, ROLES.ADMIN );
     if (error) {
       return res.status(error.code).json({
         error: error.msg,
@@ -40,7 +43,7 @@ class AdminsController {
 
   */
   static updateAdmin = async (req: Request, res: Response) => {
-    const { error, result } = await AdminService.updateAdmin(
+    const { error, result } = await AdminService.updateUser(
       req.body,
       req.params.uuid,
       req.app.get("socketService")

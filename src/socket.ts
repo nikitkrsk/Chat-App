@@ -1,6 +1,6 @@
 import { authorize } from "@thream/socketio-jwt";
 import { getRepository, Repository } from "typeorm";
-import { ChatUser, Admin } from "./entity";
+import { ChatUser } from "./entity";
 import { Server } from "socket.io";
 import { EMITS } from "./interfaces/socketEmits"
 export class SocketService {
@@ -17,23 +17,18 @@ export class SocketService {
       // tslint:disable-next-line
       console.log(socket.decodedToken);
       const userRepository: Repository<ChatUser> = getRepository(ChatUser);
-      const adminRepository: Repository<Admin> = getRepository(Admin);
       const user: ChatUser = await userRepository.findOne({
         where: { uuid: socket.decodedToken.uuid },
       });
-      const admin: Admin = await adminRepository.findOne({
-        where: { uuid: socket.decodedToken.uuid },
-      });
-      if (user === undefined && admin === undefined) {
+      if (user === undefined) {
         // tslint:disable-next-line
         console.log("user not found");
       }
-      const exUser = user ?? admin;
       // tslint:disable-next-line
-      console.log(exUser);
-      socket.emit(EMITS.LOGIN, `Hi ${exUser.username}`);
-      socket.broadcast.emit(EMITS.LOGIN, exUser.username);
-      socket.join(exUser.username);
+      console.log(user);
+      socket.emit(EMITS.LOGIN, `Hi ${user.username}`);
+      socket.broadcast.emit(EMITS.LOGIN, user.username);
+      socket.join(user.username);
       // Message
       // socket.on('message', (data) => {
       //     if (exUser.email) {

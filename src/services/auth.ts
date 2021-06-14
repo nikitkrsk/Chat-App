@@ -2,7 +2,7 @@ import { getRepository, Repository } from "typeorm";
 import redis from "redis"
 import JWTR from "jwt-redis"
 
-import { ChatUser, Admin, Role, Status } from "../entity";
+import { ChatUser, Role, Status } from "../entity";
 import {
   IRefreshInput,
   IRefreshSuccess,
@@ -30,7 +30,6 @@ export default class UserService {
     // Email to lower case
     input.email = input.email.toLowerCase().trim();
     const userRepository: Repository<ChatUser> = getRepository(ChatUser);
-    const adminRepository: Repository<Admin> = getRepository(Admin);
     const statusRepository: Repository<Status> = getRepository(Status);
     // JWT REDIS FOR TOKEN
     const redisClient = redis.createClient();
@@ -40,19 +39,14 @@ export default class UserService {
       where: { email: input.email },
       relations: ["status", "role"],
     });
-    const admin: Admin = await adminRepository.findOne({
-      where: { email: input.email },
-      relations: ["status", "role"],
-    });
-    if (user === undefined && admin === undefined) {
+    if (user === undefined) {
       return {
         error: { code: 400, msg: "Invalid credentials" },
       };
     }
-    const exUser = user ?? admin;
 
     // Compare Passwords
-    const passwordsMatch = passwordHash.verify(input.password, exUser.password);
+    const passwordsMatch = passwordHash.verify(input.password, user.password);
     if (!passwordsMatch) {
       return {
         error: { code: 400, msg: "Invalid credentials" },
@@ -62,7 +56,7 @@ export default class UserService {
     const statusActive: Status = await statusRepository.findOne({
       where: { name: "active" },
     });
-    if (exUser.status.name !== statusActive.name) {
+    if (user.status.name !== statusActive.name) {
       return {
         error: {
           code: 403,
@@ -72,13 +66,13 @@ export default class UserService {
     }
 
     const JWTData = {
-      uuid: exUser.uuid,
-      role: exUser.role.name,
-      jti: exUser.uuid
+      uuid: user.uuid,
+      role: user.role.name,
+      jti: user.uuid
     };
     const token = await jwtr.sign(JWTData, process.env.JWT_KEY!,  { expiresIn: "30s" })
 
-    delete exUser.password;
-    return { result: { user: exUser, token } };
+    delete user.password;
+    return { result: { user, token } };
   };
 }

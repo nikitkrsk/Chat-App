@@ -1,4 +1,4 @@
-import {ChatUser, Admin} from "../entity"
+import {ChatUser} from "../entity"
 
 interface Error {
   code: number;
@@ -20,7 +20,7 @@ export interface IRefreshInput {
 }
 
 export interface ISigninSuccess {
-  user: ChatUser | Admin;
+  user: ChatUser ;
   token: string;
 }
 

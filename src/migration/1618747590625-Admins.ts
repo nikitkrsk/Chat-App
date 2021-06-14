@@ -4,7 +4,7 @@ import {
   QueryRunner,
   Repository,
 } from "typeorm";
-import { Admin, AdminContactInfo, Role, Status } from "../entity";
+import { ChatUser, Role, Status } from "../entity";
 import { default as AdminsSeed } from "./seed/Admin.json";
 import { default as RolesSeed } from "./seed/Role.json";
 import { default as StatusesSeed } from "./seed/Status.json";
@@ -12,10 +12,7 @@ import passwordHash from "password-hash";
 
 export class Admins1618747590625 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const adminRepository: Repository<Admin> = getRepository(Admin);
-    const adminContactInfoRepository: Repository<AdminContactInfo> = getRepository(
-      AdminContactInfo
-    );
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
     const roleRepository: Repository<Role> = getRepository(Role);
     const statusRepository: Repository<Status> = getRepository(Status);
 
@@ -45,7 +42,7 @@ export class Admins1618747590625 implements MigrationInterface {
         console.log("Creating admins...");
         Promise.all(
           AdminsSeed.map(async (admin) => {
-            let u = new Admin();
+            let u = new ChatUser();
             const status: Status = await statusRepository.findOne({
               where: { name: "active" },
             });
@@ -56,40 +53,21 @@ export class Admins1618747590625 implements MigrationInterface {
               ...admin,
               createdAt: new Date(),
               updatedAt: new Date(),
+              verifiedAt: new Date(),
               status,
               role,
               image: null,
               password: passwordHash.generate(admin.password),
             };
-            return Promise.resolve(adminRepository.save(u));
+            return Promise.resolve(userRepository.save(u));
           })
         ).then((adm) => {
           // tslint:disable-next-line
           console.log("admins are created");
-          // tslint:disable-next-line
-          console.log("Creating admin contact info...");
-          Promise.all(
-            AdminsSeed.map(async (info) => {
-              Object.entries(info.contactInfo).forEach(([key, value]) => {
-                let r = new AdminContactInfo();
-                r = {
-                  name: key,
-                  value,
-                  admin: adm.find((el: Admin) => el.email === info.email),
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                };
-                Promise.resolve(adminContactInfoRepository.save(r));
-              });
-            })
-          ).then(() => {
-            // tslint:disable-next-line
-            console.log("info is created");
-          });
         });
       });
     });
   }
-
+  /* tslint:disable:no-empty */
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }

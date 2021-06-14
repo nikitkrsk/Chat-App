@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Generated, OneToMany } from "typeorm";
-import { Admin, ChatUser } from ".";
+import { ChatUser } from ".";
 
 @Entity()
 export class Status {
@@ -9,9 +9,6 @@ export class Status {
 
   @Column()
   name: string;
-
-  @OneToMany(() => Admin, (admin) => admin.status, { nullable: true })
-  admins?: Admin[];
 
   @OneToMany(() => ChatUser, (user) => user.status, { nullable: true })
   users?: ChatUser[];

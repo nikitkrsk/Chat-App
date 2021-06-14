@@ -14,8 +14,6 @@ export const createNewAdminSchema = (
       firstName: Joi.string().min(2).max(50).required(),
       username: Joi.string().min(2).max(50).required(),
       lastName: Joi.string().min(2).max(50).required(),
-      role: Joi.string().min(2).max(50).required(),
-      contactInfo: Joi.object()
     });
     validateRequest(req, res, next, schema);
   };
