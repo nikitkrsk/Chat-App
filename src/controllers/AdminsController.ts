@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import AdminService from "../services/users";
 
-import { ROLES } from "../interfaces/roles";
+import { ROLES } from "../interfaces";
 
 class AdminsController {
   /*

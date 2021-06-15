@@ -14,7 +14,7 @@ export const siginInSchema = (
   validateRequest(req, res, next, schema);
 };
 
-export const destroySelfSchema = (
+export const destroySchema = (
   req: Request,
   res: Response,
   next: NextFunction

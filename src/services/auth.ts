@@ -10,9 +10,8 @@ import {
   ISigninInput,
   ISigninSuccess,
   IDestroySelf,
-  IDestroySelfSuccess,
-  ISignoutInput,
-  ISignoutSuccess,
+  IDestroyAdmin,
+  IDestroySuccess,
 } from "../interfaces";
 import passwordHash from "password-hash";
 
@@ -95,23 +94,60 @@ export default class UserService {
     );
 
     delete user.password;
-    return { result: { user, token } };
+    return { result: { user, token, session: session.uuid } };
   };
+
+  /**
+   * [get uuid from token, return all sessions]
+   * @param  {[IDestroySelf]} uuid ['uuid]
+   * @return {[Promise<IResponse<Session[]>>]}[returns Sessions[]]
+   */
+  public static selfSessions = async (
+    uuid: string
+  ): Promise<IResponse<Session[]>> => {
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
+    const sessionRepository: Repository<Session> = getRepository(Session);
+
+    const user: ChatUser = await userRepository.findOne({
+      where: { uuid },
+    });
+    if (user === undefined) {
+      return {
+        error: { code: 404, msg: "Not Found" },
+      };
+    }
+    const sessions: Session[] = await sessionRepository.find({
+      where: { user },
+      order: {
+        createdAt: "DESC",
+      },
+    });
+
+    if (sessions === undefined) {
+      return { error: { code: 404, msg: "No Records" } };
+    }
+    if (sessions.length === 0) {
+      return { error: { code: 204, msg: "No Records" } };
+    }
+    return {
+      result: sessions,
+    };
+  };
+
   /**
    * [get uuid from token, get session uuid, deletes session]
    * @param  {[IDestroySelf]} input ['uuid, 'sessionId']
-   * @return {[Promise<IResponse<IDestroySelfSuccess>>]}      [returns the user, token and refresh token]
+   * @return {[Promise<IResponse<IDestroySelfSuccess>>]}      [returns  Session Terminated]
    */
   public static selfDestroySession = async (
-    input: IDestroySelf,
-  ): Promise<IResponse<IDestroySelfSuccess>> => {
-    // Email to lower case
+    input: IDestroySelf
+  ): Promise<IResponse<IDestroySuccess>> => {
     const userRepository: Repository<ChatUser> = getRepository(ChatUser);
     const sessionRepository: Repository<Session> = getRepository(Session);
     // JWT REDIS FOR TOKEN
     const redisClient = redis.createClient();
     const jwtr = new JWTR(redisClient);
-    // GET USER AND ADMIN
+    // GET USER
     const user: ChatUser = await userRepository.findOne({
       where: { uuid: input.uuid },
     });
@@ -120,6 +156,39 @@ export default class UserService {
         error: { code: 403, msg: "You Couldn't Perform This Action" },
       };
     }
+
+    const session: Session = await sessionRepository.findOne({
+      where: { uuid: input.sessionId },
+    });
+    if (session === undefined) {
+      return {
+        error: { code: 404, msg: "Session Not Found" },
+      };
+    }
+    try {
+      session.loginStatus = false;
+      await sessionRepository.save(session);
+      await jwtr.destroy(session.jti);
+    } catch {
+      return {
+        error: { code: 500, msg: "Something went wrong" },
+      };
+    }
+    return { result: { message: "Session Terminated" } };
+  };
+
+  /**
+   * [get uuid from token, get session uuid, deletes session]
+   * @param  {[IDestroyAdmin]} input ['sessionId']
+   * @return {[Promise<IResponse<IDestroySuccess>>]}      [returns  Session Terminated]
+   */
+  public static adminDestroySessions = async (
+    input: IDestroyAdmin
+  ): Promise<IResponse<IDestroySuccess>> => {
+    const sessionRepository: Repository<Session> = getRepository(Session);
+    // JWT REDIS FOR TOKEN
+    const redisClient = redis.createClient();
+    const jwtr = new JWTR(redisClient);
 
     const session: Session = await sessionRepository.findOne({
       where: { uuid: input.sessionId },

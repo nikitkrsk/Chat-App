@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import JWTR from "jwt-redis";
 import redis from "redis";
 
-import { EMITS } from "./interfaces/socketEmits";
+import { EMITS } from "./interfaces";
 export class SocketService {
   io;
   constructor(server) {

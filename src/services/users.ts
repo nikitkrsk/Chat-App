@@ -1,11 +1,9 @@
 import { getRepository, Repository } from "typeorm";
 import { Role, Status, ChatUser } from "../entity";
-import { IResponse } from "../interfaces";
 import passwordHash from "password-hash";
-import { UserCreate, UserUpdate } from "../interfaces/admin";
+import { IResponse, UserCreate, UserUpdate, EMITS, ROLES } from "../interfaces";
 import { SocketService } from "../socket";
-import { EMITS } from "../interfaces/socketEmits";
-import { ROLES } from "../interfaces/roles";
+
 export default class AdminService {
   public static getAllUsers = async (
     usersType: ROLES
