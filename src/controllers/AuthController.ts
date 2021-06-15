@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { IGetUserAuthInfoRequest } from "../interfaces";
 
 import AuthService from "../services/auth";
 class AuthController {
@@ -9,6 +10,24 @@ class AuthController {
   */
   static siginin = async (req: Request, res: Response) => {
     const { error, result } = await AuthService.signin(req.body);
+    if (error) {
+      return res.status(error.code).json({
+        error: error.msg,
+      });
+    }
+    return res.status(200).json(result);
+  };
+
+  /*
+
+    Destroy Own Sessions
+
+  */
+  static destroySelf = async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const { error, result } = await AuthService.selfDestroySession({
+      uuid: req.uuid,
+      sessionId: req.body.uuid,
+    });
     if (error) {
       return res.status(error.code).json({
         error: error.msg,

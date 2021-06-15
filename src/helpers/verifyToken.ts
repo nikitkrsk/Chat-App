@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import JWTR from "jwt-redis";
 import redis from "redis";
+import { IGetUserAuthInfoRequest, IJWTDecode } from "../interfaces";
 
-export interface IGetUserAuthInfoRequest extends Request {
-    role: string // or any other type
-  }
-export const verifyToken = (
+/**
+ * Middleware to check if user has valid jwt.
+ */
+export const verifyToken = async (
   req: IGetUserAuthInfoRequest,
   res: Response,
   next: NextFunction
@@ -15,14 +16,14 @@ export const verifyToken = (
   const token = authHeader && authHeader.split(" ")[1];
   const redisClient = redis.createClient();
   const jwtr = new JWTR(redisClient);
-  if (token == null) return res.sendStatus(401);
 
-  jwtr.verify(token, process.env.JWT_KEY as string, (err: any, user: any) => {
-    // console.log(err);
-    // console.log(user);
-    if (err) return res.sendStatus(403);
-    req.role = user.role
-    // res.setHeader( "role", user.role );
+  if (token == null) return res.sendStatus(401);
+  try {
+    const user: IJWTDecode = await jwtr.verify(token, process.env.JWT_KEY);
+    req.role = user.role;
+    req.uuid = user.uuid;
     next();
-  });
+  } catch (err) {
+    return res.sendStatus(403);
+  }
 };

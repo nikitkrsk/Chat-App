@@ -13,3 +13,14 @@ export const siginInSchema = (
   });
   validateRequest(req, res, next, schema);
 };
+
+export const destroySelfSchema = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const schema: Joi.ObjectSchema<any> = Joi.object({
+    uuid: Joi.string().required(),
+  });
+  validateRequest(req, res, next, schema);
+};

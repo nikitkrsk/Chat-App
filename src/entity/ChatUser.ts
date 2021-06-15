@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
 } from "typeorm";
-import { Role, Status, Group, Message } from ".";
+import { Role, Status, Group, Message, Session } from ".";
 
 @Entity()
 @Unique(["email"])
@@ -30,9 +30,6 @@ export class ChatUser {
 
   @Column()
   lastName: string;
-
-  @Column({ default: false })
-  loginStatus: boolean;
 
   @Column({ default: false })
   verified: boolean;
@@ -57,6 +54,9 @@ export class ChatUser {
 
   @OneToMany(() => ChatUser, (friend) => friend.friends, { nullable: true })
   friends?: ChatUser[];
+
+  @OneToMany(() => Session, (session) => session.user, { nullable: true })
+  sessions?: Session[];
 
   @ManyToMany(() => Group, (group) => group.users, { nullable: true })
   groups?: Group[];

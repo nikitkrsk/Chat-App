@@ -1,4 +1,6 @@
 import {ChatUser} from "../entity"
+import JWTR from "jwt-redis";
+import { Request } from "express";
 
 interface Error {
   code: number;
@@ -14,11 +16,6 @@ export interface ISigninInput {
   password: string;
 }
 
-export interface IRefreshInput {
-  email: string;
-  uuid: string;
-}
-
 export interface ISigninSuccess {
   user: ChatUser ;
   token: string;
@@ -27,11 +24,24 @@ export interface ISigninSuccess {
 export interface ISignoutInput {
   email: string;
 }
-
-export interface IRefreshSuccess {
-  message: string;
-  token: string;
-}
 export interface ISignoutSuccess {
   message: string;
+}
+
+export interface IDestroySelf {
+  uuid: string;
+  sessionId: string;
+}
+export interface IDestroySelfSuccess {
+  message: string;
+}
+
+export interface IGetUserAuthInfoRequest extends Request {
+  role: string;
+  uuid: string;
+}
+
+export interface IJWTDecode extends JWTR {
+  role: string;
+  uuid: string;
 }

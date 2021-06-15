@@ -26,6 +26,7 @@ export default class AdminService {
         leftJoinAndSelect: {
           role: "admin.role",
           status: "admin.status",
+          sessions: "admin.sessions"
         },
       },
     });

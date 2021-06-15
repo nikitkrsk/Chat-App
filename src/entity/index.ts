@@ -3,3 +3,4 @@ export * from "./Status";
 export * from "./ChatUser"
 export * from "./Group"
 export * from "./Message"
+export * from "./Session"

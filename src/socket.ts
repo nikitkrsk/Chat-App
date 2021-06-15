@@ -25,13 +25,13 @@ export class SocketService {
           console.log({ decodedJWT: socket.decoded });
           next();
         } catch (err) {
-          socket.decoded = "unauthorized";
+          socket.decoded = EMITS.UNAUTHORIZED;
           // tslint:disable-next-line
           console.log({ decodedJWT: socket.decoded, err });
           next();
         }
       } else {
-        socket.decoded = "unauthorized";
+        socket.decoded = EMITS.UNAUTHORIZED;
         next();
         // next(new Error("Authentication error"));
         // return socket.disconnect(true);
@@ -41,8 +41,8 @@ export class SocketService {
       // jwt payload of the connected client
       // tslint:disable-next-line
       //   console.log(socket.decoded);
-      if (socket.decoded === "unauthorized") {
-        socket.emit(EMITS.LOGIN, `LOGOUT`);
+      if (socket.decoded === EMITS.UNAUTHORIZED) {
+        socket.emit(EMITS.UNAUTHORIZED, `LOGOUT`);
       } else {
         setTimeout(
           () => socket.emit(EMITS.LOGIN, `LOgOUT`),

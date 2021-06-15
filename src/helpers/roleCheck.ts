@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-export interface IGetUserAuthInfoRequest extends Request {
-  role: string; // or any other type
-}
+import { IGetUserAuthInfoRequest } from "../interfaces";
 
 /**
  * Middleware to check if user has certain roles.
