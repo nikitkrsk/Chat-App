@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { NextFunction, Request, Response } from "express";
-export * from "./admin";
+export * from "./user";
 export * from "./auth"
 
 export const validateRequest = (

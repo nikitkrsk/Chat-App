@@ -23,7 +23,7 @@ sessionQueue.process(async (job) => {
   // JWT REDIS FOR TOKEN
   const redisClient = redis.createClient();
   const jwtr = new JWTR(redisClient);
-  logger.error(`start delete user with session jti: ${session.jti}`);
+  logger.info(`start delete user with session jti: ${session.jti}`);
   if (session !== undefined) {
     try {
       session.loginStatus = false;

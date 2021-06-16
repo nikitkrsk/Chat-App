@@ -135,6 +135,38 @@ export default class UserService {
   };
 
   /**
+   * [get uuid from token, return all sessions]
+   * @param  {[IDestroySelf]} uuid ['uuid]
+   * @return {[Promise<IResponse<Session[]>>]}[returns chat users with Sessions[]]
+   */
+  public static allSessions = async (): Promise<IResponse<ChatUser[]>> => {
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
+
+    const sessions = await userRepository.find({
+      select: ["email", "username"],
+      order: {
+        createdAt: "DESC",
+      },
+      join: {
+        alias: "users",
+        leftJoinAndSelect: {
+          sessions: "users.sessions"
+        },
+      },
+    });
+
+    if (sessions === undefined) {
+      return { error: { code: 404, msg: "No Records" } };
+    }
+    if (sessions.length === 0) {
+      return { error: { code: 204, msg: "No Records" } };
+    }
+    return {
+      result: sessions,
+    };
+  };
+
+  /**
    * [get uuid from token, get session uuid, deletes session]
    * @param  {[IDestroySelf]} input ['uuid, 'sessionId']
    * @return {[Promise<IResponse<IDestroySelfSuccess>>]}      [returns  Session Terminated]

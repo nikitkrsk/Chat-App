@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "User",
+			"name": "Admin",
 			"item": [
 				{
 					"name": "Get All Admins",
@@ -51,7 +51,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\": \"Test\",\n    \"username\": \"{{$randomUserName}}\",\n    \"lastName\": \"Admin\",\n    \"email\": \"sosme@somess.com\",\n    \"password\": \"secret123\",\n    \"phone\": \"+359 89 934 38 12\"\n}"
+							"raw": "{\n    \"firstName\": \"Test\",\n    \"username\": \"{{$randomUserName}}\",\n    \"lastName\": \"Admin\",\n    \"email\": \"{{$randomEmail}}\",\n    \"password\": \"secret123\",\n    \"phone\": \"{{$randomPhoneNumber}}\"\n}"
 						},
 						"url": {
 							"raw": "http://{{website}}/api/admins/create_admin",
@@ -71,11 +71,21 @@
 				{
 					"name": "UpdateAdmin",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\": \"Test\",\n    \"role\": \"admin\"\n}",
+							"raw": "{\n    \"firstName\": \"Test\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -83,7 +93,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{website}}/api/admins/admin/:uuid",
+							"raw": "http://{{website}}/api/admins/admin/updateSelf",
 							"protocol": "http",
 							"host": [
 								"{{website}}"
@@ -92,13 +102,7 @@
 								"api",
 								"admins",
 								"admin",
-								":uuid"
-							],
-							"variable": [
-								{
-									"key": "uuid",
-									"value": "394efeda-0f8a-46a2-bc0e-c6f643dad9a2"
-								}
+								"updateSelf"
 							]
 						}
 					},
@@ -147,6 +151,219 @@
 								"signin"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy Self Sessions / Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"sessionUuid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{website}}/api/auth/destroyOwnSessions",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"destroyOwnSessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Destroy Session",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"sessionUuid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{website}}/api/auth/adminDestroySessions",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"adminDestroySessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Self Sessions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{website}}/api/auth/mySessions",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"mySessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Sessions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{website}}/api/auth/allSessions",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"allSessions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"username\": \"{{$randomUserName}}\",\n    \"lastName\": \"{{$randomLastName}}\",\n    \"email\": \"{{$randomEmail}}\",\n    \"password\": \"secret123\",\n    \"phone\": \"{{$randomPhoneNumber}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{website}}/api/users/create_user",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"create_user"
+							]
+						},
+						"description": "No Token needed, No role check"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{website}}/api/users/update_user",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"update_user"
+							]
+						},
+						"description": "User Must Have Valid Token"
 					},
 					"response": []
 				}

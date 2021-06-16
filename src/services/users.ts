@@ -4,7 +4,7 @@ import passwordHash from "password-hash";
 import { IResponse, UserCreate, UserUpdate, EMITS, ROLES } from "../interfaces";
 import { SocketService } from "../socket";
 
-export default class AdminService {
+export default class UserService {
   public static getAllUsers = async (
     usersType: ROLES
   ): Promise<IResponse<ChatUser[]>> => {
@@ -104,7 +104,6 @@ export default class AdminService {
   ): Promise<IResponse<ChatUser>> => {
     const userRepository: Repository<ChatUser> = getRepository(ChatUser);
     const statusRepository: Repository<Status> = getRepository(Status);
-    const roleRepository: Repository<Role> = getRepository(Role);
 
     let user: ChatUser = await userRepository.findOne({
       where: { uuid },
@@ -121,11 +120,6 @@ export default class AdminService {
         where: { name: input.status },
       })) ?? user.status;
 
-    const role: Role =
-      (await roleRepository.findOne({
-        where: { name: input.role },
-      })) ?? user.role;
-
     socketService.emiter(EMITS.UPDATE_ACCOUNT, "UpdateAccount");
 
     const password: string = input.password ?? user.password;
@@ -133,7 +127,7 @@ export default class AdminService {
       ...user,
       ...input,
       status,
-      role,
+      role: user.role,
       password: user.password,
     };
 

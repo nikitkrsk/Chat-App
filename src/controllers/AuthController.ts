@@ -35,6 +35,21 @@ class AuthController {
 
   /*
 
+    Get All Sessions
+
+  */
+    static allSessions = async (req: IGetUserAuthInfoRequest, res: Response) => {
+      const { error, result } = await AuthService.allSessions();
+      if (error) {
+        return res.status(error.code).json({
+          error: error.msg,
+        });
+      }
+      return res.status(200).json(result);
+    };
+
+  /*
+
     Destroy Own Sessions
 
   */

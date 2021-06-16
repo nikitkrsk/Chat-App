@@ -8,6 +8,7 @@ const auth = Router();
 
 auth.post("/signin", siginInSchema, AuthController.siginin);
 auth.get("/mySessions",  verifyToken, emptySchema,  AuthController.selfSessions)
+auth.get("/allSessions",  verifyToken,  hasRoles(["admin"]), emptySchema, AuthController.allSessions)
 auth.post(
   "/destroyOwnSessions",
   verifyToken,

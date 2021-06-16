@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import AdminService from "../services/users";
 
-import { ROLES } from "../interfaces";
+import { IGetUserAuthInfoRequest, ROLES } from "../interfaces";
 
 class AdminsController {
   /*
@@ -42,10 +42,10 @@ class AdminsController {
     Update Admin
 
   */
-  static updateAdmin = async (req: Request, res: Response) => {
+  static updateAdmin = async (req: IGetUserAuthInfoRequest, res: Response) => {
     const { error, result } = await AdminService.updateUser(
       req.body,
-      req.params.uuid,
+      req.uuid,
       req.app.get("socketService")
     );
     if (error) {

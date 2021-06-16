@@ -1,6 +1,6 @@
 import { Router } from "express";
 import AdminsController from "../controllers/AdminsController";
-import { emptySchema, createNewAdminSchema } from "./validations";
+import { emptySchema, createNewUserSchema, updateUserSchema } from "./validations";
 import { verifyToken } from "../helpers/verifyToken";
 import { hasRoles } from "../helpers/roleCheck";
 const admins = Router();
@@ -16,13 +16,14 @@ admins.post(
   "/create_admin",
   verifyToken,
   hasRoles(["admin"]),
-  createNewAdminSchema,
+  createNewUserSchema,
   AdminsController.createAdmin
 );
 admins.put(
-  "/admin/:uuid",
+  "/admin/updateSelf",
   verifyToken,
   hasRoles(["admin"]),
+  updateUserSchema,
   AdminsController.updateAdmin
 );
 
