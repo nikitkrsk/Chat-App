@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Role, Status, Group, Message, Session } from ".";
 

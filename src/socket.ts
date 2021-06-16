@@ -1,8 +1,9 @@
 import { getRepository, Repository } from "typeorm";
-import { ChatUser } from "./entity";
+import { ChatUser, Group } from "./entity";
 import { Server } from "socket.io";
 import JWTR from "jwt-redis";
 import redis from "redis";
+import { getConnection } from "typeorm";
 
 import { EMITS } from "./interfaces";
 export class SocketService {
@@ -51,6 +52,8 @@ export class SocketService {
           )
         );
         const userRepository: Repository<ChatUser> = getRepository(ChatUser);
+        const groupRepository: Repository<Group> = getRepository(Group);
+
         const user: ChatUser = await userRepository.findOne({
           where: { uuid: socket.decoded.uuid },
         });
@@ -63,29 +66,72 @@ export class SocketService {
         socket.emit(EMITS.LOGIN, `Hi ${user.username}`);
         socket.broadcast.emit(EMITS.LOGIN, user.username);
         socket.join(user.username);
-      }
 
-      // Message
-      // socket.on('message', (data) => {
-      //     if (exUser.email) {
-      //       data.from_id = exUser.email;
-      //       socket.emit('messageSuccess', {});
-      //       let msg = {
-      //         text: data.text,
-      //         from_id: data.from_id
-      //       };
-      //       if (data.to_id) {
-      //         msg.to_id = data.to_id;
-      //       }
-      //       // Message.create(msg);
-      //       if (data.to_id) {
-      //         io.to(data.to_id).emit('message', data);
-      //         io.to(data.from_id).emit('message', data);
-      //       } else {
-      //         io.emit('message', data);
-      //       }
-      //     }
-      // });
+        // Group Created
+        socket.on("groupCreated", async (data) => {
+          if (user.username) {
+            console.log(data);
+            // data.user = user;
+            // socket.emit("messageSuccess", {});
+            const group: Group = new Group();
+            group.title = data.title;
+            group.description = data.description;
+            group.private = data.private;
+            group.lastActive = new Date();
+            group.users = [user];
+            try {
+              await groupRepository.save(group);
+            } catch (e) {
+              console.log(e.message);
+              return socket.emit("savingGroupError", "Couldn't Save Group");
+            }
+
+            if (!data.private) {
+              socket.broadcast.emit("newPublicChatCreated", group);
+            } else {
+              data.users.forEach(async (userInData) => {
+                socket
+                  .to(userInData)
+                  .emit("newChatWasCreated", "you was added to new group");
+                const userInGroup: ChatUser = await userRepository.findOne({
+                  where: { username: userInData },
+                });
+                await getConnection()
+                  .createQueryBuilder()
+                  .relation(ChatUser, "groups")
+                  .of(userInGroup)
+                  .add(group);
+              });
+            }
+          }
+        });
+
+        // // Message
+        // socket.on("message", async (data) => {
+        //   if (user.email) {
+        //     data.user = user;
+        //     socket.emit("messageSuccess", {});
+        //     let group: Group = await groupRepository.findOne({
+        //       where: { uuid: data.groupUuid },
+        //     });
+
+        //     let msg = {
+        //       text: data.text,
+        //       from_id: data.from_id,
+        //     };
+        //     if (data.to_id) {
+        //       msg.to_id = data.to_id;
+        //     }
+        //     // Message.create(msg);
+        //     if (data.to_id) {
+        //       io.to(data.to_id).emit("message", data);
+        //       io.to(data.from_id).emit("message", data);
+        //     } else {
+        //       io.emit("message", data);
+        //     }
+        //   }
+        // });
+      }
     });
   }
 

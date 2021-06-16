@@ -5,6 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { ChatUser, Message } from ".";
 
@@ -26,6 +27,7 @@ export class Group {
   lastActive: Date;
 
   @ManyToMany(() => ChatUser, (user) => user.groups, { nullable: true })
+  @JoinTable()
   users?: ChatUser[];
 
   @OneToMany(() => Message, (msg) => msg.group, { nullable: true })
