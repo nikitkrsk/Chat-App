@@ -45,7 +45,7 @@ export class SocketService {
         socket.emit(EMITS.UNAUTHORIZED, `LOGOUT`);
       } else {
         setTimeout(
-          () => socket.emit(EMITS.LOGIN, `LOgOUT`),
+          () => socket.emit(EMITS.UNAUTHORIZED, `LOgOUT`),
           Math.abs(
             new Date(socket.decoded.exp * 1000).getTime() - new Date().getTime()
           )
