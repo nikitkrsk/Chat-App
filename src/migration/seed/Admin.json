@@ -9,11 +9,18 @@
     "email": "atroshenkonikita@gmail.com",
     "phone": "+359899993311",
     "role": "admin",
-    "isVerified": false,
-    "loginStatus": false,
-    "contactInfo": {
-      "whatsApp": "+359899993311",
-      "skype": "testSkype"
-    }
+    "loginStatus": false
+  },
+  {
+    "uuid": "c28afa42-a9f6-4ce0-a30a-e9c9e8826317",
+    "password": "secret123",
+    "firstName": "Anakin",
+    "username": "nikittest",
+    "verified": true,
+    "lastName": "Skywalker",
+    "email": "test@atroshenkonikita.com",
+    "phone": "+359899993322",
+    "role": "user",
+    "loginStatus": false
   }
 ]
