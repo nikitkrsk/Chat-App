@@ -41,6 +41,6 @@ ALTER USER newuser WITH PASSWORD 'secret123';
 ```
 
 # Useful links
-[Sokcets emit cheatsheet](https://socket.io/docs/v4/emit-cheatsheet/)
-[FE Example](https://github.com/nikitkrsk/Chat-App-FE)
+* [Sokcets emit cheatsheet](https://socket.io/docs/v4/emit-cheatsheet/)
+* [FE Example](https://github.com/nikitkrsk/Chat-App-FE)
 
