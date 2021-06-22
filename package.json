@@ -1,5 +1,5 @@
 {
-  "name": "lectures",
+  "name": "chatapp",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,7 @@
     "lint": "tslint --fix -c ./tslint.json 'src/**/*{.ts,.tsx}'",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
-  "author": "",
+  "author": "nikitkrsk",
   "license": "ISC",
   "devDependencies": {
     "tslint": "^6.1.3",
