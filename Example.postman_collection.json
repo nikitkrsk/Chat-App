@@ -107,6 +107,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{website}}/api/admins/get_users",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"admins",
+								"get_users"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -364,6 +394,36 @@
 							]
 						},
 						"description": "User Must Have Valid Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{website}}/api/users/get_all",
+							"protocol": "http",
+							"host": [
+								"{{website}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"get_all"
+							]
+						}
 					},
 					"response": []
 				}

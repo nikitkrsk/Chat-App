@@ -15,6 +15,14 @@ class AuthController {
         error: error.msg,
       });
     }
+    // res.cookie("jwt", result.token, {
+    //   httpOnly: true, // HTTP ONLY will be blocked on http not https
+    //   secure: true,
+    //   maxAge: 3600000,
+    // });
+    res.cookie("jwt_notSecured", result.token);
+    // res.cookie("jwt", result.token, { secure: true, maxAge: 3600000 });
+
     return res.status(200).json(result);
   };
 
@@ -23,30 +31,30 @@ class AuthController {
     Get All Self Sessions
 
   */
-    static selfSessions = async (req: IGetUserAuthInfoRequest, res: Response) => {
-      const { error, result } = await AuthService.selfSessions(req.uuid);
-      if (error) {
-        return res.status(error.code).json({
-          error: error.msg,
-        });
-      }
-      return res.status(200).json(result);
-    };
+  static selfSessions = async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const { error, result } = await AuthService.selfSessions(req.uuid);
+    if (error) {
+      return res.status(error.code).json({
+        error: error.msg,
+      });
+    }
+    return res.status(200).json(result);
+  };
 
   /*
 
     Get All Sessions
 
   */
-    static allSessions = async (req: IGetUserAuthInfoRequest, res: Response) => {
-      const { error, result } = await AuthService.allSessions();
-      if (error) {
-        return res.status(error.code).json({
-          error: error.msg,
-        });
-      }
-      return res.status(200).json(result);
-    };
+  static allSessions = async (req: IGetUserAuthInfoRequest, res: Response) => {
+    const { error, result } = await AuthService.allSessions();
+    if (error) {
+      return res.status(error.code).json({
+        error: error.msg,
+      });
+    }
+    return res.status(200).json(result);
+  };
 
   /*
 

@@ -11,7 +11,7 @@ class AdminsController {
 
   */
   static getAll = async (req: Request, res: Response) => {
-    const { error, result } = await AdminService.getAllUsers(ROLES.ADMIN);
+    const { error, result } = await AdminService.getAllUsers(ROLES.USER);
     if (error) {
       return res.status(error.code).json({
         error: error.msg,
@@ -21,6 +21,23 @@ class AdminsController {
       .status(200)
       .json(result.map(({ password, ...keepAttrs }) => keepAttrs));
   };
+
+   /*
+
+    Get All
+
+  */
+    static getAllAdmins= async (req: Request, res: Response) => {
+      const { error, result } = await AdminService.getAllUsers(ROLES.ADMIN);
+      if (error) {
+        return res.status(error.code).json({
+          error: error.msg,
+        });
+      }
+      return res
+        .status(200)
+        .json(result.map(({ password, ...keepAttrs }) => keepAttrs));
+    };
 
   /*
 

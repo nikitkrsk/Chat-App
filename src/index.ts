@@ -5,7 +5,7 @@ import express from "express";
 import cors from "cors";
 import router from "./routes";
 import dbConfig from "./ormconfig";
-
+import cookieParser from "cookie-parser";
 import * as http from "http";
 import { SocketService } from "./socket";
 
@@ -21,7 +21,13 @@ createConnection(dbConfig).then(async (connection) => {
   // const io = new Server(server);
 
   // Call midlewares
-  app.use(cors());
+  app.use(
+    cors({
+      origin: "http://localhost:3000", // (Whatever your frontend url is)
+      credentials: true, // <= Accept credentials (cookies) sent by the client
+    })
+  );
+  app.use(cookieParser());
 
   // A lot of projects use / Now is depricated  - not supported
   // import bodyParser from "body-parser";

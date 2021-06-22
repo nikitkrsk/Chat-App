@@ -4,6 +4,22 @@ import UserServoce from "../services/users";
 import { IGetUserAuthInfoRequest, ROLES } from "../interfaces";
 
 class UsersController {
+    /*
+
+    Get All
+
+  */
+    static getAll = async (req: Request, res: Response) => {
+      const { error, result } = await UserServoce.getAll();
+      if (error) {
+        return res.status(error.code).json({
+          error: error.msg,
+        });
+      }
+      return res
+        .status(200)
+        .json(result);
+    };
   /*
 
     Create User

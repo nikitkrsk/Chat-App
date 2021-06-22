@@ -1,6 +1,10 @@
 import { Router } from "express";
 import AdminsController from "../controllers/AdminsController";
-import { emptySchema, createNewUserSchema, updateUserSchema } from "./validations";
+import {
+  emptySchema,
+  createNewUserSchema,
+  updateUserSchema,
+} from "./validations";
 import { verifyToken } from "../helpers/verifyToken";
 import { hasRoles } from "../helpers/roleCheck";
 const admins = Router();
@@ -10,8 +14,17 @@ admins.get(
   verifyToken,
   hasRoles(["admin"]),
   emptySchema,
+  AdminsController.getAllAdmins
+);
+
+admins.get(
+  "/get_users",
+  verifyToken,
+  hasRoles(["admin"]),
+  emptySchema,
   AdminsController.getAll
 );
+
 admins.post(
   "/create_admin",
   verifyToken,

@@ -23,12 +23,12 @@ export class SocketService {
           );
           socket.decoded = payload;
           // tslint:disable-next-line
-          console.log({ decodedJWT: socket.decoded });
+          console.log({ checkOk: socket.decoded });
           next();
         } catch (err) {
           socket.decoded = EMITS.UNAUTHORIZED;
           // tslint:disable-next-line
-          console.log({ decodedJWT: socket.decoded, err });
+          console.log({ checkFailed: socket.decoded, err });
           next();
         }
       } else {
@@ -82,7 +82,7 @@ export class SocketService {
             try {
               await groupRepository.save(group);
             } catch (e) {
-              console.log(e.message);
+              // console.log(e.message);
               return socket.emit("savingGroupError", "Couldn't Save Group");
             }
 

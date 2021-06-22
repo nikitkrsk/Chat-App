@@ -8,7 +8,7 @@ npm run start
 ## To clear Dbs
 ```bash
 sudo -u postgres psql somedatabase
-DROP TABLE chat_user, "group", session, message, migrations, role, status CASCADE;
+DROP TABLE chat_user, "group", group_users_chat_user, session, message, migrations, role, status CASCADE;
 ```
 
 # GIT MOST USED COMMANDS

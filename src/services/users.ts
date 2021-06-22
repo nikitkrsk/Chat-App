@@ -24,7 +24,7 @@ export default class UserService {
         leftJoinAndSelect: {
           role: "admin.role",
           status: "admin.status",
-          sessions: "admin.sessions"
+          sessions: "admin.sessions",
         },
       },
     });
@@ -37,6 +37,33 @@ export default class UserService {
     }
     return {
       result: admins,
+    };
+  };
+
+  public static getAll = async (
+  ): Promise<IResponse<ChatUser[]>> => {
+    const userRepository: Repository<ChatUser> = getRepository(ChatUser);
+    const statusRepository: Repository<Status> = getRepository(Status);
+
+    const status: Status = await statusRepository.findOne({
+      where: { name: "active" },
+    });
+    const users = await userRepository.find({
+      where: { status },
+      select: ['username', 'firstName', 'lastName', 'email', 'image' ],
+      order: {
+        createdAt: "DESC",
+      },
+    });
+
+    if (users === undefined) {
+      return { error: { code: 404, msg: "No Records" } };
+    }
+    if (users.length === 0) {
+      return { error: { code: 204, msg: "No Records" } };
+    }
+    return {
+      result: users,
     };
   };
 
@@ -70,10 +97,13 @@ export default class UserService {
         error: { code: 409, msg: "Incorrect Role" },
       };
     }
-    const adminVerified = roleInput === ROLES.ADMIN ? {
-      verifiedAt : new Date(),
-      verified: true
-    }: null
+    const adminVerified =
+      roleInput === ROLES.ADMIN
+        ? {
+            verifiedAt: new Date(),
+            verified: true,
+          }
+        : null;
 
     let user: ChatUser = new ChatUser();
     user = {
