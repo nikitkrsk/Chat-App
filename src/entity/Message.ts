@@ -28,7 +28,7 @@ export class Message {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => ChatUser, (user) => user.messages, { nullable: true })
+  @ManyToOne(() => ChatUser, (user) => user.messages, { nullable: true })
   users?: ChatUser[];
 
   @ManyToOne(() => Group, (group) => group.messages, { nullable: true })

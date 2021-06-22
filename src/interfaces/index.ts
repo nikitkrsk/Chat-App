@@ -4,6 +4,7 @@ export * from "./auth"
 export * from "./user"
 export * from "./socketEmits"
 export * from "./roles"
+export * from "./group"
 interface Error {
   code: number;
   msg: string;

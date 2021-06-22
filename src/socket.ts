@@ -34,14 +34,11 @@ export class SocketService {
       } else {
         socket.decoded = EMITS.UNAUTHORIZED;
         next();
-        // next(new Error("Authentication error"));
-        // return socket.disconnect(true);
       }
     });
     this.io.on("connection", async (socket) => {
       // jwt payload of the connected client
       // tslint:disable-next-line
-      //   console.log(socket.decoded);
       if (socket.decoded === EMITS.UNAUTHORIZED) {
         socket.emit(EMITS.UNAUTHORIZED, `LOGOUT`);
       } else {
@@ -61,14 +58,12 @@ export class SocketService {
           // tslint:disable-next-line
           console.log("user not found");
         }
-        // tslint:disable-next-line
-        //   console.log(user);
         socket.emit(EMITS.LOGIN, `Hi ${user.username}`);
-        socket.broadcast.emit(EMITS.LOGIN, user.username);
+        // socket.broadcast.emit(EMITS.LOGIN_OF_OTHER_USER, user.username); // TODO CHECK WHY IT CAUSES RERENDERS
         socket.join(user.username);
 
         // Group Created
-        socket.on("groupCreated", async (data) => {
+        socket.on(EMITS.GROUP_CREATED, async (data) => {
           if (user.username) {
             console.log(data);
             // data.user = user;
@@ -83,16 +78,16 @@ export class SocketService {
               await groupRepository.save(group);
             } catch (e) {
               // console.log(e.message);
-              return socket.emit("savingGroupError", "Couldn't Save Group");
+              return socket.emit(EMITS.ERROR, "Couldn't Save Group");
             }
 
             if (!data.private) {
-              socket.broadcast.emit("newPublicChatCreated", group);
+              socket.broadcast.emit(EMITS.NEW_PUBLIC_CHAT, group);
             } else {
               data.users.forEach(async (userInData) => {
                 socket
                   .to(userInData)
-                  .emit("newChatWasCreated", "you was added to new group");
+                  .emit(EMITS.NEW_CHAT, "you was added to new group");
                 const userInGroup: ChatUser = await userRepository.findOne({
                   where: { username: userInData },
                 });

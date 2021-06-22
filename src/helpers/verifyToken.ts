@@ -24,6 +24,6 @@ export const verifyToken = async (
     req.uuid = user.uuid;
     next();
   } catch (err) {
-    return res.sendStatus(403);
+    return res.status(403).json({error: "Unauthorized"});
   }
 };

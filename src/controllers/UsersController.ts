@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import UserServoce from "../services/users";
+import UserService from "../services/users";
 import { IGetUserAuthInfoRequest, ROLES } from "../interfaces";
 
 class UsersController {
@@ -10,7 +10,7 @@ class UsersController {
 
   */
     static getAll = async (req: Request, res: Response) => {
-      const { error, result } = await UserServoce.getAll();
+      const { error, result } = await UserService.getAll();
       if (error) {
         return res.status(error.code).json({
           error: error.msg,
@@ -26,7 +26,7 @@ class UsersController {
 
   */
   static createUser = async (req: Request, res: Response) => {
-    const { error, result } = await UserServoce.createUser(
+    const { error, result } = await UserService.createUser(
       req.body,
       ROLES.USER
     );
@@ -44,7 +44,7 @@ class UsersController {
 
   */
   static updateUser = async (req: IGetUserAuthInfoRequest, res: Response) => {
-    const { error, result } = await UserServoce.updateUser(
+    const { error, result } = await UserService.updateUser(
       req.body,
       req.uuid,
       req.app.get("socketService")

@@ -27,7 +27,7 @@ export const hasRoles = (roles) => {
       });
 
       if (!isAllowed) {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ error: "Unauthorized" });
       } else {
         next();
       }

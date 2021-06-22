@@ -83,13 +83,13 @@ export default class UserService {
       jti: session.jti,
     };
     const token = await jwtr.sign(JWTData, process.env.JWT_KEY!, {
-      expiresIn: "1m",
+      expiresIn: "15m",
     });
     sessionQueue.add(
       { jti: session.jti },
       // the same time as refresh token in millis
       {
-        delay: 1000 * 60 , // 1h
+        delay: 1000 * 60 * 15 , // 1h
       }
     );
 

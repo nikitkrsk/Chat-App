@@ -21,7 +21,7 @@ export class Group {
   description: string;
 
   @Column({ default: true })
-  private: string;
+  private: boolean;
 
   @Column()
   lastActive: Date;
