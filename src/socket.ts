@@ -5,7 +5,7 @@ import JWTR from "jwt-redis";
 import redis from "redis";
 import { getConnection } from "typeorm";
 
-import { EMITS } from "./interfaces";
+import { EMIT } from "./interfaces";
 export class SocketService {
   io;
   constructor(server) {
@@ -26,24 +26,24 @@ export class SocketService {
           console.log({ checkOk: socket.decoded });
           next();
         } catch (err) {
-          socket.decoded = EMITS.UNAUTHORIZED;
+          socket.decoded = EMIT.UNAUTHORIZED;
           // tslint:disable-next-line
           console.log({ checkFailed: socket.decoded, err });
           next();
         }
       } else {
-        socket.decoded = EMITS.UNAUTHORIZED;
+        socket.decoded = EMIT.UNAUTHORIZED;
         next();
       }
     });
     this.io.on("connection", async (socket) => {
       // jwt payload of the connected client
       // tslint:disable-next-line
-      if (socket.decoded === EMITS.UNAUTHORIZED) {
-        socket.emit(EMITS.UNAUTHORIZED, `LOGOUT`);
+      if (socket.decoded === EMIT.UNAUTHORIZED) {
+        socket.emit(EMIT.UNAUTHORIZED, `LOGOUT`);
       } else {
         setTimeout(
-          () => socket.emit(EMITS.UNAUTHORIZED, `LOgOUT`),
+          () => socket.emit(EMIT.UNAUTHORIZED, `LOgOUT`),
           Math.abs(
             new Date(socket.decoded.exp * 1000).getTime() - new Date().getTime()
           )
@@ -58,12 +58,12 @@ export class SocketService {
           // tslint:disable-next-line
           console.log("user not found");
         }
-        socket.emit(EMITS.LOGIN, `Hi ${user.username}`);
+        socket.emit(EMIT.LOGIN, `Hi ${user.username}`);
         // socket.broadcast.emit(EMITS.LOGIN_OF_OTHER_USER, user.username); // TODO CHECK WHY IT CAUSES RERENDERS
         socket.join(user.username);
 
         // Group Created
-        socket.on(EMITS.GROUP_CREATED, async (data) => {
+        socket.on(EMIT.GROUP_CREATED, async (data) => {
           if (user.username) {
             console.log(data);
             // data.user = user;
@@ -78,16 +78,16 @@ export class SocketService {
               await groupRepository.save(group);
             } catch (e) {
               // console.log(e.message);
-              return socket.emit(EMITS.ERROR, "Couldn't Save Group");
+              return socket.emit(EMIT.ERROR, "Couldn't Save Group");
             }
 
             if (!data.private) {
-              socket.broadcast.emit(EMITS.NEW_PUBLIC_CHAT, group);
+              socket.broadcast.emit(EMIT.NEW_PUBLIC_CHAT, group);
             } else {
               data.users.forEach(async (userInData) => {
                 socket
                   .to(userInData)
-                  .emit(EMITS.NEW_CHAT, "you was added to new group");
+                  .emit(EMIT.NEW_CHAT, "you was added to new group");
                 const userInGroup: ChatUser = await userRepository.findOne({
                   where: { username: userInData },
                 });
@@ -130,7 +130,7 @@ export class SocketService {
     });
   }
 
-  emiter(event: EMITS, body) {
+  emiter(event: EMIT, body) {
     // tslint:disable-next-line
     console.log(body);
     if (body) this.io.emit(event, body);

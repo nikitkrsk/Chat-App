@@ -1,7 +1,7 @@
 {
   "name": "chatapp",
   "version": "1.0.0",
-  "description": "Chat app with ts, postgres, redis & websockets",
+  "description": "Realtime chat application with TypeScript, PostgreSQL, Redis, JWT & WebSockets",
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts --poll",

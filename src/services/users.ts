@@ -1,7 +1,7 @@
 import { getRepository, Repository } from "typeorm";
 import { Role, Status, ChatUser } from "../entity";
 import passwordHash from "password-hash";
-import { IResponse, UserCreate, UserUpdate, EMITS, ROLES } from "../interfaces";
+import { IResponse, UserCreate, UserUpdate, EMIT, ROLES } from "../interfaces";
 import { SocketService } from "../socket";
 
 export default class UserService {
@@ -150,7 +150,7 @@ export default class UserService {
         where: { name: input.status },
       })) ?? user.status;
 
-    socketService.emiter(EMITS.UPDATE_ACCOUNT, "UpdateAccount");
+    socketService.emiter(EMIT.UPDATE_ACCOUNT, "UpdateAccount");
 
     const password: string = input.password ?? user.password;
     user = {

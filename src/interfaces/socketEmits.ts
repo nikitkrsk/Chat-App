@@ -1,4 +1,4 @@
-export enum EMITS {
+export enum EMIT {
     // Auth
     LOGIN = "login",
     LOGIN_OF_OTHER_USER = "loginUsers",
